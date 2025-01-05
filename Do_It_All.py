@@ -6,20 +6,6 @@ import uuid
 import json
 import bs4
 import lxml
-clients = [
-    {'type':'image','name':'black-forest-labs/FLUX.1-dev','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'deepseek-ai/DeepSeek-V2.5-1210','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'Qwen/Qwen2.5-Coder-32B-Instruct','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'katanemo/Arch-Function-3B','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'PowerInfer/SmallThinker-3B-Preview','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'Qwen/QwQ-32B-Preview','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'Qwen/QVQ-72B-Preview','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'meta-llama/Llama-3.2-1B','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'Snowflake/snowflake-arctic-embed-l-v2.0','rank':'op','max_tokens':4096,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'Snowflake/snowflake-arctic-embed-m-v2.0','rank':'op','max_tokens':4096,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'HuggingFaceTB/SmolLM2-1.7B-Instruct','rank':'op','max_tokens':40000,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'mistralai/Mixtral-8x7B-Instruct-v0.1','rank':'op','max_tokens':40000,'schema':{'bos':'<s>','eos':'</s>'}},
-]
 
 def isV(inp,is_=False):  # Verbose
     if is_==True:
@@ -39,6 +25,21 @@ class Do_It_All:
         ></iframe>"""
         self.seed_val=1
         print() 
+        self.clients = [
+    {'type':'image','name':'black-forest-labs/FLUX.1-dev','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
+    {'type':'text','name':'deepseek-ai/DeepSeek-V2.5-1210','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
+    {'type':'text','name':'Qwen/Qwen2.5-Coder-32B-Instruct','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
+    {'type':'text','name':'katanemo/Arch-Function-3B','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
+    {'type':'text','name':'PowerInfer/SmallThinker-3B-Preview','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
+    {'type':'text','name':'Qwen/QwQ-32B-Preview','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
+    {'type':'text','name':'Qwen/QVQ-72B-Preview','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
+    {'type':'text','name':'meta-llama/Llama-3.2-1B','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
+    {'type':'text','name':'Snowflake/snowflake-arctic-embed-l-v2.0','rank':'op','max_tokens':4096,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
+    {'type':'text','name':'Snowflake/snowflake-arctic-embed-m-v2.0','rank':'op','max_tokens':4096,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
+    {'type':'text','name':'HuggingFaceTB/SmolLM2-1.7B-Instruct','rank':'op','max_tokens':40000,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
+    {'type':'text','name':'mistralai/Mixtral-8x7B-Instruct-v0.1','rank':'op','max_tokens':40000,'schema':{'bos':'<s>','eos':'</s>'}},
+]
+
 
 
     def gen_im(self,prompt,seed):
