@@ -1,6 +1,6 @@
 [project]
 dynamic = ["dependencies"]
-name = "Do-It-All"
+name = "Do_It_All"
 version = "0.0.1"
 authors = [
   { name="broadfield-dev" },
