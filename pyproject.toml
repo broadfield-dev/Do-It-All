@@ -1,21 +1,32 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
-dynamic = ["dependencies"]
 name = "doitall"
-version = "0.0.1"
+version = "0.0.1" 
+description = "Do-It-All is a versatile application designed to handle various tasks in an efficient manner."
 authors = [
-  { name="broadfield-dev" },
+  { name="Broadfield Dev" }
 ]
-description = "Basic AI Agent System"
+dependencies = [
+  "huggingface-hub==0.27.0",
+  "beautifulsoup4==4.12.3",
+  "requests==2.32.3",
+  "lxml==5.3.0"
+]
 readme = "README.md"
 requires-python = ">=3.8"
+license = { text = "MIT" }
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
 ]
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
 
 [project.urls]
-Homepage = "https://github.com/broadfield-dev/doitall"
-Issues = "https://github.com/broadfield-dev/doitall/issues"
+"Homepage" = "https://github.com/broadfield-dev/doitall"
+"Issues" = "https://github.com/broadfield-dev/doitall/issues"
+
+[tool.setuptools.packages.find]
+where = ["module"]
