@@ -1,6 +1,6 @@
 [project]
 dynamic = ["dependencies"]
-name = "Do_It_All"
+name = "Do-It-All"
 version = "0.0.1"
 authors = [
   { name="broadfield-dev" },
@@ -17,5 +17,5 @@ classifiers = [
 dependencies = {file = ["requirements.txt"]}
 
 [project.urls]
-Homepage = "https://github.com/broadfield-dev/Do_It_All"
-Issues = "https://github.com/broadfield-dev/Do_It_All/issues"
+Homepage = "https://github.com/broadfield-dev/Do-It-All"
+Issues = "https://github.com/broadfield-dev/Do-It-All/issues"
