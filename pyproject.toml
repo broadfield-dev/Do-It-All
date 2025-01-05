@@ -1,0 +1,21 @@
+[project]
+dynamic = ["dependencies"]
+name = "Do-It-All"
+version = "0.0.1"
+authors = [
+  { name="broadfield-dev" },
+]
+description = "Basic AI Agent System"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[project.urls]
+Homepage = "https://github.com/broadfield-dev/Do-It-All"
+Issues = "https://github.com/broadfield-dev/Do-It-All/issues"
