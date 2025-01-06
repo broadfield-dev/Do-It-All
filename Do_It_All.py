@@ -44,7 +44,7 @@ class Do_It_All:
 
     def gen_im(self,prompt,seed):
         isV('generating image', True)
-        im_client=InferenceClient(clients[0]['name'])
+        im_client=InferenceClient(self.clients[0]['name'])
         image_out = im_client.text_to_image(prompt=prompt,height=128,width=128,num_inference_steps=10,seed=seed)
         output=f'{uuid.uuid4()}.png'
         image_out.save(output)
@@ -149,8 +149,8 @@ class Do_It_All:
 
         
     def format_prompt(self,message, mod, system):
-        eos=f"{clients[int(mod)]['schema']['eos']}\n"
-        bos=f"{clients[int(mod)]['schema']['bos']}\n"
+        eos=f"{self.clients[int(mod)]['schema']['eos']}\n"
+        bos=f"{self.clients[int(mod)]['schema']['bos']}\n"
         prompt=""
         prompt+=bos
         prompt+=system
@@ -174,8 +174,8 @@ class Do_It_All:
         #print("DATA ", data)
         gen_images=False
 
-        client=InferenceClient(clients[int(mod)]['name'])
-        client_tok=clients[int(mod)]['max_tokens']
+        client=InferenceClient(self.clients[int(mod)]['name'])
+        client_tok=self.clients[int(mod)]['max_tokens']
         good_seed=[947385642222,7482965345792,8584806344673]
         timeline=str(data[4])
         roles = [{'name':'MANAGER','system_prompt':str(prompts.MANAGER.replace("**TIMELINE**",timeline).replace("**HISTORY**",str(history)))},
@@ -312,7 +312,7 @@ class Do_It_All:
         fn=""
         com=""
         go=True
-        MAX_DATA=int(clients[int(mod)]['max_tokens'])*2
+        MAX_DATA=int(self.clients[int(mod)]['max_tokens'])*2
         if not history:history=[]
         history.extend([{'role':'user','content':prompt_in['text']}])
         out_hist=history
