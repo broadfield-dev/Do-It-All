@@ -1,32 +1,33 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "doitall"
-version = "0.0.1" 
-description = "Do-It-All is a versatile application designed to handle various tasks in an efficient manner."
+version = "0.1.0"
 authors = [
-  { name="Broadfield Dev" }
+    { name="Broadfield Dev", email="contact@broadfield.dev" },
 ]
-dependencies = [
-  "huggingface-hub==0.27.0",
-  "beautifulsoup4==4.12.3",
-  "requests==2.32.3",
-  "lxml==5.3.0"
-]
+description = "Do-It-All is a versatile application designed to handle various tasks in an efficient manner."
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
+keywords = ["python", "package", "doitall"]
 classifiers = [
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/broadfield-dev/doitall"
 "Issues" = "https://github.com/broadfield-dev/doitall/issues"
+
+[project.dependencies]
+huggingface-hub = "^0.27.0"
+beautifulsoup4 = "^4.12.3"
+requests = "^2.32.3"
+lxml = "^5.3.0"
 
 [tool.setuptools.packages.find]
 where = ["module"]
