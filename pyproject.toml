@@ -14,18 +14,21 @@ license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.8"
 keywords = ["python", "package", "doitall", "ai", "agent"]
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+dependencies = [
+  "huggingface-hub==0.27.0",
+  "beautifulsoup4==4.12.3",
+  "requests==2.32.3",
+  "lxml==5.3.0"
 ]
-
-[tool.setuptools.packages.find]
-where = ["module"]
-
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/broadfield-dev/doitall"
 "Issues" = "https://github.com/broadfield-dev/doitall/issues"
+
+[tool.setuptools.packages.find]
+where = ["module"]
