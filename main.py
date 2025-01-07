@@ -45,7 +45,7 @@ class Do_It_All:
     def gen_im(self,prompt,seed):
         isV('generating image', True)
         im_client=InferenceClient(self.clients[0]['name'])
-        image_out = im_client.text_to_image(prompt=prompt,height=128,width=128,num_inference_steps=10,seed=seed)
+        image_out = im_client.text_to_image(prompt=prompt,height=256,width=256,num_inference_steps=10,seed=seed)
         output=f'{uuid.uuid4()}.png'
         image_out.save(output)
         isV(('Done: ', output), True)
@@ -221,7 +221,7 @@ class Do_It_All:
             stream = client.text_generation(formatted_prompt, **self.generate_kwargs, stream=True, details=True, return_full_text=True)
             for response in stream:
                 output += response.token.text
-            yield output
+            yield output.replace('<|im_start|>','').replace('<|im_end|>','')
             yield history
             yield prompt
     
@@ -302,7 +302,7 @@ class Do_It_All:
             return out1,out2
 
                
-    def agent(self,prompt_in,history,mod=2,tok_in="",seed=1):
+    def agent(self,prompt_in,history,mod=2,tok_in="",seed=1,max_thought=3):
         isV(prompt_in,True)
         isV(('mod ',mod),True)
         in_data=["None","None","None","None","None",]
@@ -315,16 +315,16 @@ class Do_It_All:
         MAX_DATA=int(self.clients[int(mod)]['max_tokens'])*2
         if not history:history=[]
         history.extend([{'role':'user','content':prompt_in['text']}])
-        out_hist=history
+        out_hist=history.copy()
+        thought_hist=[]
         merm=""
         html=""
         cnt=1
         rand = True
         static_val=1
         while go == True:
-            print('history ', cnt)
-            print(history)
-            cnt+=1
+            ('history ', cnt)
+            #print(history)
             seed = seed
             c=0
             #history = [history[-4:]]
@@ -336,8 +336,8 @@ class Do_It_All:
             role="PATHMAKER"
             #in_data[3]=file_list
             
-            out_hist.extend([{'role':'assistant','content':'Making Plan...'}])
-            yield out_hist,merm,html
+            thought_hist.extend([{'role':'assistant','content':'Making Plan...'}])
+            yield out_hist,merm,html,thought_hist
 
             outph=self.generate(prompt,history,mod,2400,seed,role,in_data)
             path_out = str(list(outph)[0])
@@ -359,8 +359,8 @@ class Do_It_All:
                 html=""
                 print('HTML code: TRUE')
                 #html=self.html_html.replace('CONTENT',out_parse['string'].replace(","," "))          
-            out_hist.extend([{'role':'assistant','content':'Choosing Path...'}])
-            yield out_hist,merm,html
+            thought_hist.extend([{'role':'assistant','content':'Choosing Path...'}])
+            yield out_hist,merm,html,thought_hist
             
             in_data[4]=str(merm)
             isV('calling MANAGER')
@@ -378,8 +378,8 @@ class Do_It_All:
                         com = com_line.split('action_input=')[1].split('<|im_end|>')[0]
                         #com = com_line.split('action_input=')[1].replace('<|im_end|>','').replace("}","").replace("]","").replace("'","")
                         isV(com)
-                        out_hist.extend([{'role':'assistant','content':f'Calling command: {fn}'}])
-                        yield out_hist,merm,html
+                        thought_hist.extend([{'role':'assistant','content':f'Calling command: {fn}'}])
+                        yield out_hist,merm,html,thought_hist
                         
                     except Exception as e:
                         pass
@@ -387,8 +387,8 @@ class Do_It_All:
                     if 'RESPOND' in fn:
                         isV("RESPOND called")
                         in_data[1]=com
-                        out_hist.extend([{'role':'assistant','content':'Formulating Response...'}])
-                        yield out_hist,merm,html
+                        thought_hist.extend([{'role':'assistant','content':'Formulating Response...'}])
+                        yield out_hist,merm,html,thought_hist
                         ret = self.generate(prompt, history,mod,10000,seed,role='RESPOND',data=in_data)
                         ret_out=str(list(ret)[0])
                         hist_catch=[{'role':'assistant','content':ret_out}]
@@ -397,22 +397,22 @@ class Do_It_All:
                         history.extend([{'role':'system','content':'All tasks are complete, call: COMPLETE'}])
                         #html = self.parse_from_str(ret_out)
                         #html=self.html_html.replace('CONTENT',out_parse['string'].replace(","," ")) 
-                        yield out_hist,merm,html
+                        yield out_hist,merm,html,thought_hist
 
                         #go=False
                         #out_hist.extend([{'role':'assistant','content':'Complete'}])
                         #yield out_hist,merm,html
                     elif 'IMAGE' in fn:
-                        out_hist.extend([{'role':'assistant','content':'Generating Image...'}])
-                        yield out_hist,merm,html
+                        thought_hist.extend([{'role':'assistant','content':'Generating Image...'}])
+                        yield out_hist,merm,html,thought_hist
                         isV('IMAGE called',True)
                         out_im=self.gen_im(prompt,seed)
                         out_hist.extend(out_im)
-                        yield out_hist,merm,html
+                        yield out_hist,merm,html,thought_hist
     
                     elif 'INTERNET_SEARCH' in fn:
-                        out_hist.extend([{'role':'assistant','content':'Researching Topic...'}])
-                        yield out_hist,merm,html
+                        thought_hist.extend([{'role':'assistant','content':'Researching Topic...'}])
+                        yield out_hist,merm,html,thought_hist
                         isV('INTERNET_SEARCH called',True)
                         ret = self.find_all(prompt, history, com,mod,10000,seed,data=in_data)
                         in_data[3]=str(ret)
@@ -425,15 +425,23 @@ class Do_It_All:
                         history.extend([{'role':'system','content':f'RETURNED SEARCH CONTENT: {str(res0)}'}])
                         history.extend([{'role':'system','content':'All tasks are complete, call: RESPOND or COMPLETE'}])
                         out_hist.extend([{'role':'assistant','content':f'{str(res0)}'}])
-                        yield out_hist,merm,html
+                        yield out_hist,merm,html,thought_hist
                     elif 'COMPLETE' in fn:
                         isV('COMPLETE',True)
                         history.extend([{'role':'system','content':'Complete'}])
-                        out_hist.extend([{'role':'assistant','content':'Complete'}])
-                        yield out_hist,merm,html
+                        thought_hist.extend([{'role':'assistant','content':'Complete'}])
+                        yield out_hist,merm,html,thought_hist
                         go=False
                         break
                     elif 'NONE' in fn:
                         isV('ERROR ACTION NOT FOUND',True)
                         history.extend([{'role':'system','content':f'observation:The last thing we attempted resulted in an error, check formatting on the tool call'}])
                     else:pass;seed = random.randint(1,9999999999999)
+        cnt+=1
+        if cnt > max_thought:
+            thought_hist.extend([{'role':'assistant','content':f'observation: We have used more than the Max Thought Limit, ending chat'}])
+            yield out_hist,merm,html,thought_hist
+            go=False
+            
+
+
