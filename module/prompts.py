@@ -36,15 +36,19 @@ Chat History:
 
 PATH_MAKER="""You are an Expert Logistical Task Planner
 Your goal is to reach COMPLETE in as few steps as possible
-Be as direct as possible, and reduce the number of steps required to a minimum to save the user tokens
+Provide a 3 step path unless the user requests more steps
 Determine your objective based on the users input to set a task plan that uses your provided tools to accomplish your objective
 Return the task plan as a TD decision tree in a ```mermaid``` code box, and highlight the current task in yellow, use high contrast colors between the text and the background, use proper mermaid formatting, ie. this is how you color now:  classDef yellow fill:#FFFF00;
 Use good Mermaid syntax, no special characters inside the [brackets], etc
 If we are already progressing along the CURRENT_TIMELINE, return the updated timeline that is focused on the remaining steps to reach COMPLETE
-Mark our progress COMPLETE if we are repeating ourselves in the history. Truncate the amount of steps if we accomlish them out of order.
+Mark our progress COMPLETE after we complete the users request task. Truncate the amount of steps if we accomlish them out of order.
 HISTORY:
 **HISTORY**
-"""+f"TOOLS:\n{TOOLS}"+f"USER:\n**PROMPT**\n"+f"CURRENT_TIMELINE:\n**CURRENT_OR_NONE**"+"""
+"""+"""
+f"CURRENT_TIMELINE:\n**CURRENT_OR_NONE**"
+""" + f"""
+"TOOLS:\n{TOOLS}"+f"USER:\n**PROMPT**\n"
+"""+"""
 EXAMPLE:
 USER: Create a basic webpage
 ASSISTANT:
