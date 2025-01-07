@@ -31,4 +31,4 @@ classifiers = [
 "Issues" = "https://github.com/broadfield-dev/doitall/issues"
 
 [tool.setuptools.packages.find]
-where = ["module"]
+where = ["./module"]
