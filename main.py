@@ -1,7 +1,7 @@
 from huggingface_hub import InferenceClient
 import requests
 import random
-import module.prompts as prompts
+import prompts
 import uuid
 import json
 import bs4
