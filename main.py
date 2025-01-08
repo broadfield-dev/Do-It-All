@@ -126,11 +126,11 @@ class Do_It_All:
                     
                     return history
             else: 
-                history.extend([{'role':'system','content':"observation: An Error occured\nI need to trigger a search using the following syntax:\ntool: INTERNET_SEARCH tool_input=URL\n"}])
+                history.extend([{'role':'system','content':"observation: An Error occured\nI need to trigger a search using the following syntax:\naction: INTERNET_SEARCH action_input=URL\n"}])
                 return history
         except Exception as e:
             isV (e)
-            history.extend([{'role':'system','content':"observation: I need to trigger a search using the following syntax:\ntool: INTERNET_SEARCH tool_input=URL\n"}])
+            history.extend([{'role':'system','content':"observation: I need to trigger a search using the following syntax:\naction: INTERNET_SEARCH action_input=URL\n"}])
             return history
         return history
 
@@ -376,12 +376,12 @@ class Do_It_All:
             history.extend([{'role':'assistant','content':str(outp0)}])
             #yield history
             for line in outp0.split("\n"):
-                if "tool:" in line:
+                if "action:" in line:
                     try:
-                        com_line = line.split('tool:')[1]
-                        fn = com_line.split('tool_input=')[0]
-                        com = com_line.split('tool_input=')[1].split('<|im_end|>')[0]
-                        #com = com_line.split('tool_input=')[1].replace('<|im_end|>','').replace("}","").replace("]","").replace("'","")
+                        com_line = line.split('action:')[1]
+                        fn = com_line.split('action_input=')[0]
+                        com = com_line.split('action_input=')[1].split('<|im_end|>')[0]
+                        #com = com_line.split('action_input=')[1].replace('<|im_end|>','').replace("}","").replace("]","").replace("'","")
                         isV(com)
                         thought_hist.extend([{'role':'assistant','content':f'Calling command: {fn}'}])
                         yield out_hist,merm,html,thought_hist
@@ -446,7 +446,7 @@ class Do_It_All:
                         isV('ERROR ACTION NOT FOUND',True)
                         history.extend([{'role':'system','content':f'observation:The last thing we attempted resulted in an error, check formatting on the tool call'}])
                     else:
-                        history.extend([{'role':'system','content':'observation: The last thing I tried resulted in an error, I should try selecting a different available tool using the format, tool:TOOL_NAME tool_input=required info'}])
+                        history.extend([{'role':'system','content':'observation: The last thing I tried resulted in an error, I should try selecting a different available tool using the format, action:TOOL_NAME action_input=required info'}])
 
                         pass;seed = random.randint(1,9999999999999)
             
