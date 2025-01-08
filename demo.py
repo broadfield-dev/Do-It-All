@@ -60,7 +60,7 @@ def load_merm(inp):
     else:
         pass
 css="""
-textarea.svelte-cgv3eu{
+#prompt_box textarea{
     color:white;
   }
   
@@ -91,7 +91,7 @@ with gr.Blocks(head=head,theme=theme,css=css) as ux:
         with gr.Column(scale=3):
 
 
-            prompt=gr.MultimodalTextbox(label="Prompt",file_count="multiple", file_types=["image"])
+            prompt=gr.MultimodalTextbox(label="Prompt", elem_id="prompt_box", file_count="multiple", file_types=["image"])
             chatbot2=gr.Chatbot(label="Thoughts",type='messages',show_label=False,height=200,max_height=200, show_share_button=False, show_copy_button=True, layout="panel")
             chatbot=gr.Chatbot(label="Chatbot",type='messages',show_label=False, height=800, show_share_button=False, show_copy_button=True, layout="panel")
 
