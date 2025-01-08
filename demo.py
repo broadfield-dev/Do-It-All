@@ -1,7 +1,8 @@
 import gradio as gr
 from module.gradio_theme import theme
 import random
-from main import Do_It_All
+#from main import Do_It_All
+import main
 
 def isV(inp,is_=False):  # Verbose
     if is_==True:
@@ -52,7 +53,7 @@ js_="""
         // Reinitialize Mermaid to render the new graph
         mermaid.run();
     }"""        
-do_it=Do_It_All(clients=client_hf)
+do_it=main.Do_It_All(clients=client_hf)
 def load_merm(inp):
     if inp != None:
         outp=do_it.merm_html.replace('CONTENT',inp)
