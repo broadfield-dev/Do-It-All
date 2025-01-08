@@ -27,6 +27,7 @@ pip install ./doitall
 python doitall/demo.py
 ```
 # TODO
+- Add more model sources
 - Document Reading
 - RAG
 - Screen Reading
