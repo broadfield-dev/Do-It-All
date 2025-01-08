@@ -1,7 +1,6 @@
 TOOLS="""
 You have real time internet access in your tools
 You only have access to the tools listed below, use this format to call the tools: action: TOOL_NAME action_input=data
-Return RESPOND after every successful INTERNET_SEARCH that is in your HISTORY
 Return COMPLETE after you have returned a suitable response
 Your tools are:
 - action: INTERNET_SEARCH action_input=URL  #uses a real-time internet search to find the contents of the page at URL, only INTERNET_SEARCH when you need additional knowledge, start with a search engine like Google or an alternative
