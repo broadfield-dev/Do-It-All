@@ -94,8 +94,8 @@ def main():
 
 
                 prompt=gr.MultimodalTextbox(label="Prompt", elem_id="prompt_box", file_count="multiple", file_types=["image"])
-                chatbot2=gr.Chatbot(label="Thoughts",type='messages',show_label=False,height=200,max_height=200, show_share_button=False, show_copy_button=True, layout="panel")
-                chatbot=gr.Chatbot(label="Chatbot",type='messages',show_label=False, height=800, show_share_button=False, show_copy_button=False, layout="panel")
+                chatbot2=gr.Chatbot(label="Thoughts",type='messages',show_label=False,height=200,max_height=200, show_share_button=False, show_copy_button=False, layout="panel")
+                chatbot=gr.Chatbot(label="Chatbot",type='messages',show_label=False, height=800, show_share_button=False, show_copy_button=True, layout="panel")
 
             with gr.Column(scale=1):
                 with gr.Row():
