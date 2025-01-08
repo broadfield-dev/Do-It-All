@@ -76,44 +76,47 @@ def check_ch(inp,inp_val):
     return value
 def check_box():
     return True
-with gr.Blocks(head=head,theme=theme,css=css) as ux:
-    gr.HTML("""<center><div style='font-family:monospace;font-size:xxx-large;font-weight:900;'>Do-it-All</div><br>
-            <div style='font-size:large;font-weight:700;'>Basic AI Agent System</div><br>
-            <div style='font-size:large;font-weight:900;'></div><br>
-            """)
-   
-    with gr.Row():
-        
-        with gr.Column(scale=1):
-            m_html=gr.HTML("<div id='test_merm'></div>")
-            h_html=gr.HTML("<div id='test_merm'></div>")
+def main():
+    with gr.Blocks(head=head,theme=theme,css=css) as ux:
+        gr.HTML("""<center><div style='font-family:monospace;font-size:xxx-large;font-weight:900;'>Do-it-All</div><br>
+                <div style='font-size:large;font-weight:700;'>Basic AI Agent System</div><br>
+                <div style='font-size:large;font-weight:900;'></div><br>
+                """)
+    
+        with gr.Row():
+            
+            with gr.Column(scale=1):
+                m_html=gr.HTML("<div id='test_merm'></div>")
+                h_html=gr.HTML("<div id='test_merm'></div>")
 
-        with gr.Column(scale=3):
+            with gr.Column(scale=3):
 
 
-            prompt=gr.MultimodalTextbox(label="Prompt", elem_id="prompt_box", file_count="multiple", file_types=["image"])
-            chatbot2=gr.Chatbot(label="Thoughts",type='messages',show_label=False,height=200,max_height=200, show_share_button=False, show_copy_button=True, layout="panel")
-            chatbot=gr.Chatbot(label="Chatbot",type='messages',show_label=False, height=800, show_share_button=False, show_copy_button=True, layout="panel")
+                prompt=gr.MultimodalTextbox(label="Prompt", elem_id="prompt_box", file_count="multiple", file_types=["image"])
+                chatbot2=gr.Chatbot(label="Thoughts",type='messages',show_label=False,height=200,max_height=200, show_share_button=False, show_copy_button=True, layout="panel")
+                chatbot=gr.Chatbot(label="Chatbot",type='messages',show_label=False, height=800, show_share_button=False, show_copy_button=False, layout="panel")
 
-        with gr.Column(scale=1):
-            with gr.Row():
-                with gr.Column():
-                    seed_ch=gr.Checkbox(label="Random",value=False)
-                    seed=gr.Number(label="Seed",step=1,precision=0,value=do_it.seed_val,interactive=True)
-                with gr.Column():
-                    mod_c=gr.Dropdown(label="Model",choices=[n['name'] for n in do_it.clients],value='Qwen/Qwen2.5-Coder-32B-Instruct',type='index')
-                    tok_in=gr.Textbox(label='HF TOKEN')
-            with gr.Row():
-                submit_b = gr.Button()
-                stop_b = gr.Button("Stop")
-                clear = gr.ClearButton([chatbot,prompt])
+            with gr.Column(scale=1):
+                with gr.Row():
+                    with gr.Column():
+                        seed_ch=gr.Checkbox(label="Random",value=False)
+                        seed=gr.Number(label="Seed",step=1,precision=0,value=do_it.seed_val,interactive=True)
+                    with gr.Column():
+                        mod_c=gr.Dropdown(label="Model",choices=[n['name'] for n in do_it.clients],value='Qwen/Qwen2.5-Coder-32B-Instruct',type='index')
+                        tok_in=gr.Textbox(label='HF TOKEN')
+                with gr.Row():
+                    submit_b = gr.Button()
+                    stop_b = gr.Button("Stop")
+                    clear = gr.ClearButton([chatbot,prompt])
 
-            text_trig=gr.Textbox(elem_id='test_box')
-    ux.load(check_box,None,seed_ch)
-    seed_ch.change(check_ch,[seed_ch,seed],seed)
-    sub_b = submit_b.click(check_ch,[seed_ch,seed],seed).then(do_it.agent, [prompt,chatbot,mod_c,tok_in,seed_ch,seed],[chatbot,text_trig,h_html,chatbot2])
-    sub_p = prompt.submit(check_ch,[seed_ch,seed],seed).then(do_it.agent, [prompt,chatbot,mod_c,tok_in,seed_ch,seed],[chatbot,text_trig,h_html,chatbot2])
-    chatbot2.change(check_ch,[seed_ch,seed],seed)
-    text_trig.change(load_merm,text_trig,None,js=js_)
-    stop_b.click(None,None,None, cancels=[sub_b,sub_p])
-ux.queue(default_concurrency_limit=20).launch(max_threads=40)
+                text_trig=gr.Textbox(elem_id='test_box')
+        ux.load(check_box,None,seed_ch)
+        seed_ch.change(check_ch,[seed_ch,seed],seed)
+        sub_b = submit_b.click(check_ch,[seed_ch,seed],seed).then(do_it.agent, [prompt,chatbot,mod_c,tok_in,seed_ch,seed],[chatbot,text_trig,h_html,chatbot2])
+        sub_p = prompt.submit(check_ch,[seed_ch,seed],seed).then(do_it.agent, [prompt,chatbot,mod_c,tok_in,seed_ch,seed],[chatbot,text_trig,h_html,chatbot2])
+        chatbot2.change(check_ch,[seed_ch,seed],seed)
+        text_trig.change(load_merm,text_trig,None,js=js_)
+        stop_b.click(None,None,None, cancels=[sub_b,sub_p])
+    ux.queue(default_concurrency_limit=20).launch(max_threads=40)
+if __name__ == '__main__':
+    main()
