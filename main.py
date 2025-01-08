@@ -368,7 +368,6 @@ class Do_It_All:
                         com_line = line.split('action:')[1]
                         fn = com_line.split('action_input=')[0]
                         com = com_line.split('action_input=')[1].split('<|im_end|>')[0]
-                        #com = com_line.split('action_input=')[1].replace('<|im_end|>','').replace("}","").replace("]","").replace("'","")
                         isV(com)
                         thought_hist.extend([{'role':'assistant','content':f'Calling command: {fn}'}])
                         thought_hist.extend([{'role':'assistant','content':f'Command input: {com}'}])
