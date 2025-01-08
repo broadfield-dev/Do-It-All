@@ -32,8 +32,6 @@ class Do_It_All:
         print() 
         self.clients = clients
 
-
-
     def gen_im(self,prompt,seed):
         isV('generating image', True)
         im_client=InferenceClient(self.clients[0]['name'])
@@ -42,11 +40,8 @@ class Do_It_All:
         image_out.save(output)
         isV(('Done: ', output), True)
         return [{'role':'assistant','content': {'path':output}}]
-        
-
 
     def compress_data(self,c,purpose, history,mod,tok,seed,data):
-        
         isV(data)
         resp=[None,]
         #if not data: data=[];data[0]="NONE"
@@ -117,9 +112,6 @@ class Do_It_All:
                     else:
                         isV(out)
                         rawp = out
-                    #print(rawp)
-                    
-                    #history.extend([{'role':'system','content':"observation: the search results are:\n {}\n".format(rawp)}])
                     return rawp
                 else:
                     history.extend([{'role':'system','content':f"observation: That URL string returned an error: {source.status_code}, I should try a different URL string\n"}])
@@ -310,13 +302,10 @@ class Do_It_All:
         history.extend([{'role':'user','content':prompt_in['text']}])
         out_hist=history.copy()
         thought_hist=[{'role':'system','content':'starting'}]
-        merm=""
+        merm="graph TD;A[Thought path...];"
         html=""
         cnt=max_thought
-        rand = True
-        static_val=1
         in_data[0]=prompt_in
-
 
         while go == True:
             if max_thought==0:
@@ -329,9 +318,7 @@ class Do_It_All:
             else:
                 seed = seed
             self.seed_val=seed
-
             c=0
-            #history = [history[-4:]]
             if len(str(history)) > self.MAX_HISTORY:
                 #history = [{'role':'assistant','content':self.compress_data(len(str(history)),prompt,history,mod,2400,seed, in_data)  }]
                 history = [{'role':'assistant','content':history[-2:] if len(str(history[-2:])) > self.MAX_HISTORY else history[-1:]}]
@@ -384,11 +371,12 @@ class Do_It_All:
                         #com = com_line.split('action_input=')[1].replace('<|im_end|>','').replace("}","").replace("]","").replace("'","")
                         isV(com)
                         thought_hist.extend([{'role':'assistant','content':f'Calling command: {fn}'}])
+                        thought_hist.extend([{'role':'assistant','content':f'Command input: {com}'}])
                         yield out_hist,merm,html,thought_hist
-                        
                     except Exception as e:
                         pass
                         fn="NONE"
+                    
                     if 'RESPOND' in fn:
                         isV("RESPOND called")
                         in_data[1]=com
@@ -399,15 +387,8 @@ class Do_It_All:
                         hist_catch=[{'role':'assistant','content':ret_out}]
                         out_hist.extend(hist_catch)
                         history.extend(hist_catch)
-                        history.extend([{'role':'Assistant','content':'All tasks are complete, call: COMPLETE'}])
-                        out_hist.extend([{'role':'Assistant','content':'All tasks are complete, call: COMPLETE'}])
-                        #html = self.parse_from_str(ret_out)
-                        #html=self.html_html.replace('CONTENT',out_parse['string'].replace(","," ")) 
+                        history.extend([{'role':'assistant','content':'All tasks are complete, call: COMPLETE'}])
                         yield out_hist,merm,html,thought_hist
-
-                        #go=False
-                        #thought_hist.extend([{'role':'assistant','content':'Complete'}])
-                        #yield out_hist,merm,html,thought_hist
 
                     elif 'IMAGE' in fn:
                         thought_hist.extend([{'role':'assistant','content':'Generating Image...'}])
@@ -423,18 +404,16 @@ class Do_It_All:
                         isV('INTERNET_SEARCH called',True)
                         ret = self.find_all(prompt, history, com,mod,10000,seed,data=in_data)
                         in_data[3]=str(ret)
-                        print("********************************************")
-                        #print(in_data[3])
                         thought_hist.extend([{'role':'assistant','content':'Compiling Report...'}])
                         yield out_hist,merm,html,thought_hist
                         res_out = self.generate(prompt, history,mod,10000,seed,role='INTERNET_SEARCH',data=in_data)
                         res0=str(list(res_out)[0])
                         #html = self.parse_from_str(res0)
-
                         history.extend([{'role':'system','content':f'RETURNED SEARCH CONTENT: {str(res0)}'}])
                         history.extend([{'role':'system','content':'thought: I have responded with a report of my recent internet search, this step is COMPLETE'}])
                         out_hist.extend([{'role':'assistant','content':f'{str(res0)}'}])
                         yield out_hist,merm,html,thought_hist
+                    
                     elif 'COMPLETE' in fn:
                         isV('COMPLETE',True)
                         history.extend([{'role':'system','content':'Complete'}])
@@ -447,7 +426,6 @@ class Do_It_All:
                         history.extend([{'role':'system','content':f'observation:The last thing we attempted resulted in an error, check formatting on the tool call'}])
                     else:
                         history.extend([{'role':'system','content':'observation: The last thing I tried resulted in an error, I should try selecting a different available tool using the format, action:TOOL_NAME action_input=required info'}])
-
                         pass;seed = random.randint(1,9999999999999)
             
             if max_thought > 0:
