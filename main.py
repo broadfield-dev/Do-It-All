@@ -1,4 +1,9 @@
 from huggingface_hub import InferenceClient
+#from text_generation import InferenceAPIClient
+#import gradio as gr
+#import ollama
+#import openai
+import datetime
 import requests
 import random
 import module.prompts as prompts
@@ -13,7 +18,7 @@ def isV(inp,is_=False):  # Verbose
         is_=False
 
 class Do_It_All:
-    def __init__(self,rand=True,static_val=1):
+    def __init__(self,clients):
         self.MAX_HISTORY=15000
         self.save_settings=[{}]
         self.merm_html="""CONTENT"""    
@@ -25,20 +30,7 @@ class Do_It_All:
         ></iframe>"""
         self.seed_val=1
         print() 
-        self.clients = [
-    {'type':'image','name':'black-forest-labs/FLUX.1-dev','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'deepseek-ai/DeepSeek-V2.5-1210','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'Qwen/Qwen2.5-Coder-32B-Instruct','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'katanemo/Arch-Function-3B','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'PowerInfer/SmallThinker-3B-Preview','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'Qwen/QwQ-32B-Preview','rank':'op','max_tokens':16384,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'Qwen/QVQ-72B-Preview','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'meta-llama/Llama-3.2-1B','rank':'op','max_tokens':32768,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'Snowflake/snowflake-arctic-embed-l-v2.0','rank':'op','max_tokens':4096,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'Snowflake/snowflake-arctic-embed-m-v2.0','rank':'op','max_tokens':4096,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'HuggingFaceTB/SmolLM2-1.7B-Instruct','rank':'op','max_tokens':40000,'schema':{'bos':'<|im_start|>','eos':'<|im_end|>'}},
-    {'type':'text','name':'mistralai/Mixtral-8x7B-Instruct-v0.1','rank':'op','max_tokens':40000,'schema':{'bos':'<s>','eos':'</s>'}},
-]
+        self.clients = clients
 
 
 
@@ -66,14 +58,14 @@ class Do_It_All:
         isV(f'chunk:: {chunk}')
         isV(f'divr:: {divr}')
         isV (f'divi:: {divi}')
-        task="refine this data"
+        task1="refine this data"
         out = []
         #out=""
         s=0
         e=chunk
         isV(f'e:: {e}')
         new_history=""
-        task = f'Compile this data to fulfill the task: {task}, and complete the purpose: {purpose}\n'
+        task = f'Compile this data to fulfill the task: {task1}, and complete the purpose: {purpose}\n'
         for z in range(divi):
             data[0]=new_history
             isV(f's:e :: {s}:{e}')
@@ -95,8 +87,8 @@ class Do_It_All:
             s=s+chunk
 
         isV ("final" + resp_o)
-        history = [{'role':'system','content':'Compressed History: ' + str(resp_o)}]
-        return history
+        #history = [{'role':'system','content':'Compressed History: ' + str(resp_o)}]
+        return str(resp_o)
 
     def find_all(self,prompt,history, url,mod,tok,seed,data):
         return_list=[]
@@ -118,12 +110,7 @@ class Do_It_All:
                         out.append([{"LINK TITLE":p.get('title'),"URL":p.get('href'),"STRING":p.string}])
                     c=0
                     out2 = str(out)
-                    rl = len(out2)
-                    isV(f'rl:: {rl}')
-                    for i in str(out2):
-                        if i == " " or i=="," or i=="\n" or i=="/" or i=="." or i=="<":
-                            c +=1
-                    isV (f'c:: {c}')
+
                     if len(out2) > self.MAX_HISTORY:
                         isV("compressing...")
                         rawp = self.compress_data(len(out2),prompt,out2,mod,tok,seed, data)  
@@ -132,18 +119,18 @@ class Do_It_All:
                         rawp = out
                     #print(rawp)
                     
-                    history.extend([{'role':'system','content':"observation: the search results are:\n {}\n".format(rawp)}])
-                    return history
+                    #history.extend([{'role':'system','content':"observation: the search results are:\n {}\n".format(rawp)}])
+                    return rawp
                 else:
                     history.extend([{'role':'system','content':f"observation: That URL string returned an error: {source.status_code}, I should try a different URL string\n"}])
                     
                     return history
             else: 
-                history.extend([{'role':'system','content':"observation: An Error occured\nI need to trigger a search using the following syntax:\naction: INTERNET_SEARCH action_input=URL\n"}])
+                history.extend([{'role':'system','content':"observation: An Error occured\nI need to trigger a search using the following syntax:\ntool: INTERNET_SEARCH tool_input=URL\n"}])
                 return history
         except Exception as e:
             isV (e)
-            history.extend([{'role':'system','content':"observation: I need to trigger a search using the following syntax:\naction: INTERNET_SEARCH action_input=URL\n"}])
+            history.extend([{'role':'system','content':"observation: I need to trigger a search using the following syntax:\ntool: INTERNET_SEARCH tool_input=URL\n"}])
             return history
         return history
 
@@ -167,22 +154,15 @@ class Do_It_All:
         # )
         pass
                 
-    def generate(self,prompt,history,mod=2,tok=4000,seed=1,role="ASSISTANT",data=None):
-        #print("#####",history,"######")
-        print(mod)
+    def generate(self,prompt,history,mod=2,tok=4000,seed=1,role="RESPOND",data=None):
         isV(role)
-        #print("DATA ", data)
-        gen_images=False
-
-        client=InferenceClient(self.clients[int(mod)]['name'])
-        client_tok=self.clients[int(mod)]['max_tokens']
-        good_seed=[947385642222,7482965345792,8584806344673]
+        current_time=str(datetime.datetime.now())
         timeline=str(data[4])
-        roles = [{'name':'MANAGER','system_prompt':str(prompts.MANAGER.replace("**TIMELINE**",timeline).replace("**HISTORY**",str(history)))},
-                {'name':'PATHMAKER','system_prompt':str(prompts.PATH_MAKER.replace("**CURRENT_OR_NONE**",timeline).replace("**PROMPT**",json.dumps(data[0],indent=4)).replace("**HISTORY**",str(history)))},
+        roles = [{'name':'MANAGER','system_prompt':str(prompts.MANAGER.replace("**CURRENT_TIME**",current_time).replace("**TIMELINE**",timeline).replace("**HISTORY**",str(history)))},
+                {'name':'PATHMAKER','system_prompt':str(prompts.PATH_MAKER.replace('**STEPS**',str(data[2])).replace("**CURRENT_OR_NONE**",timeline).replace("**PROMPT**",json.dumps(data[0],indent=4)).replace("**HISTORY**",str(history)))},
                 {'name':'INTERNET_SEARCH','system_prompt':str(prompts.INTERNET_SEARCH.replace("**TASK**",str(prompt)).replace("**KNOWLEDGE**",str(data[3])).replace("**HISTORY**",str(history)))},
                 {'name':'COMPRESS','system_prompt':str(prompts.COMPRESS.replace("**TASK**",str(prompt)).replace("**KNOWLEDGE**",str(data[0])).replace("**HISTORY**",str(history)))},
-                {'name':'RESPOND','system_prompt':str(prompts.RESPOND.replace("**PROMPT**",prompt).replace("**HISTORY**",str(history)).replace("**TIMELINE**",timeline))},
+                {'name':'RESPOND','system_prompt':str(prompts.RESPOND.replace("**CURRENT_TIME**",current_time).replace("**PROMPT**",prompt).replace("**HISTORY**",str(history)).replace("**TIMELINE**",timeline))},
                 ]
         g=True
         for roless in roles:
@@ -195,7 +175,7 @@ class Do_It_All:
                     
         formatted_prompt = self.format_prompt(prompt, mod, system_prompt)
         
-        if tok==None:tok=client_tok-len(formatted_prompt)+10
+        if tok==None:print('Error: tok value is None')
         isV("tok",tok)
         self.generate_kwargs = dict(
             temperature=0.99,
@@ -207,23 +187,37 @@ class Do_It_All:
         )
         output = ""
        
-        if role=="RESPOND":
-            isV("Running ", role)
+        if self.clients[int(mod)]['loc'] == 'hf':
+            isV("Running ", self.clients[int(mod)]['name'])
+            client=InferenceClient(self.clients[int(mod)]['name'])
             stream = client.text_generation(formatted_prompt, **self.generate_kwargs, stream=True, details=True, return_full_text=True)
             for response in stream:
                 output += response.token.text
+            yield output.replace('<|im_start|>','').replace('<|im_end|>','')
+            yield history
+            yield prompt
+        
+        '''elif self.clients[int(mod)]['loc'] == 'gradio':
+            isV("Running ", role)
+
+            client = InferenceAPIClient(self.clients[int(mod)]['name'])
+            for response in client.generate_stream(formatted_prompt, **self.generate_kwargs, return_full_text=True):
+                if not response.token.special:
+                    output += response.token.text
+
             yield output.replace('<|im_start|>','').replace('<|im_end|>','')
             yield history
             yield prompt
 
-        else:
+        elif self.clients[int(mod)]['loc'] == 'ollama':
             isV("Running ", role)
+            client=InferenceClient(self.clients[int(mod)]['name'])
             stream = client.text_generation(formatted_prompt, **self.generate_kwargs, stream=True, details=True, return_full_text=True)
             for response in stream:
                 output += response.token.text
             yield output.replace('<|im_start|>','').replace('<|im_end|>','')
             yield history
-            yield prompt
+            yield prompt'''
     
     def multi_parse(self,inp):
         parse_boxes=[
@@ -302,12 +296,11 @@ class Do_It_All:
             return out1,out2
 
                
-    def agent(self,prompt_in,history,mod=2,tok_in="",seed=1,max_thought=3):
+    def agent(self,prompt_in,history,mod=2,tok_in="",rand_seed=True,seed=1,max_thought=5):
         isV(prompt_in,True)
         isV(('mod ',mod),True)
         in_data=["None","None","None","None","None",]
         #in_data[0]=prompt_in['text']
-        in_data[0]=prompt_in
         prompt=prompt_in['text']
         fn=""
         com=""
@@ -316,21 +309,32 @@ class Do_It_All:
         if not history:history=[]
         history.extend([{'role':'user','content':prompt_in['text']}])
         out_hist=history.copy()
-        thought_hist=[]
+        thought_hist=[{'role':'system','content':'starting'}]
         merm=""
         html=""
-        cnt=1
+        cnt=max_thought
         rand = True
         static_val=1
+        in_data[0]=prompt_in
+
+
         while go == True:
-            ('history ', cnt)
+            if max_thought==0:
+                in_data[2]="Unlimited"
+            else:
+                in_data[2]=cnt
             #print(history)
-            seed = seed
+            if rand_seed==True:
+                seed = random.randint(1,99999999999999)
+            else:
+                seed = seed
+            self.seed_val=seed
+
             c=0
             #history = [history[-4:]]
             if len(str(history)) > self.MAX_HISTORY:
-                history = self.compress_data(len(str(history)),prompt,history,mod,2400,seed, in_data)  
-
+                #history = [{'role':'assistant','content':self.compress_data(len(str(history)),prompt,history,mod,2400,seed, in_data)  }]
+                history = [{'role':'assistant','content':history[-2:] if len(str(history[-2:])) > self.MAX_HISTORY else history[-1:]}]
             isV('history',False)
             isV('calling PATHMAKER')
             role="PATHMAKER"
@@ -338,10 +342,9 @@ class Do_It_All:
             
             thought_hist.extend([{'role':'assistant','content':'Making Plan...'}])
             yield out_hist,merm,html,thought_hist
-
-            outph=self.generate(prompt,history,mod,2400,seed,role,in_data)
+            outph=self.generate(prompt,history,mod,2400,seed,role,data=in_data)
             path_out = str(list(outph)[0])
-            history.extend([{'role':'system','content':path_out}])
+            #history.extend([{'role':'system','content':path_out}])
             out_parse={}
             rt=True
             for line in path_out.split("\n"):
@@ -363,20 +366,22 @@ class Do_It_All:
             yield out_hist,merm,html,thought_hist
             
             in_data[4]=str(merm)
+            print("HISTORY: ",history)
             isV('calling MANAGER')
             role="MANAGER"
             outp=self.generate(prompt,history,mod,128,seed,role,in_data)
             outp0=list(outp)[0].split('<|im_end|>')[0]
+            print("Manager: ", outp0)
             #outp0 = re.sub('[^a-zA-Z0-9\s.,?!%()]', '', outpp)
             history.extend([{'role':'assistant','content':str(outp0)}])
             #yield history
             for line in outp0.split("\n"):
-                if "action:" in line:
+                if "tool:" in line:
                     try:
-                        com_line = line.split('action:')[1]
-                        fn = com_line.split('action_input=')[0]
-                        com = com_line.split('action_input=')[1].split('<|im_end|>')[0]
-                        #com = com_line.split('action_input=')[1].replace('<|im_end|>','').replace("}","").replace("]","").replace("'","")
+                        com_line = line.split('tool:')[1]
+                        fn = com_line.split('tool_input=')[0]
+                        com = com_line.split('tool_input=')[1].split('<|im_end|>')[0]
+                        #com = com_line.split('tool_input=')[1].replace('<|im_end|>','').replace("}","").replace("]","").replace("'","")
                         isV(com)
                         thought_hist.extend([{'role':'assistant','content':f'Calling command: {fn}'}])
                         yield out_hist,merm,html,thought_hist
@@ -394,14 +399,16 @@ class Do_It_All:
                         hist_catch=[{'role':'assistant','content':ret_out}]
                         out_hist.extend(hist_catch)
                         history.extend(hist_catch)
-                        history.extend([{'role':'system','content':'All tasks are complete, call: COMPLETE'}])
+                        history.extend([{'role':'Assistant','content':'All tasks are complete, call: COMPLETE'}])
+                        out_hist.extend([{'role':'Assistant','content':'All tasks are complete, call: COMPLETE'}])
                         #html = self.parse_from_str(ret_out)
                         #html=self.html_html.replace('CONTENT',out_parse['string'].replace(","," ")) 
                         yield out_hist,merm,html,thought_hist
 
                         #go=False
-                        #out_hist.extend([{'role':'assistant','content':'Complete'}])
-                        #yield out_hist,merm,html
+                        #thought_hist.extend([{'role':'assistant','content':'Complete'}])
+                        #yield out_hist,merm,html,thought_hist
+
                     elif 'IMAGE' in fn:
                         thought_hist.extend([{'role':'assistant','content':'Generating Image...'}])
                         yield out_hist,merm,html,thought_hist
@@ -418,12 +425,14 @@ class Do_It_All:
                         in_data[3]=str(ret)
                         print("********************************************")
                         #print(in_data[3])
+                        thought_hist.extend([{'role':'assistant','content':'Compiling Report...'}])
+                        yield out_hist,merm,html,thought_hist
                         res_out = self.generate(prompt, history,mod,10000,seed,role='INTERNET_SEARCH',data=in_data)
                         res0=str(list(res_out)[0])
                         #html = self.parse_from_str(res0)
 
                         history.extend([{'role':'system','content':f'RETURNED SEARCH CONTENT: {str(res0)}'}])
-                        history.extend([{'role':'system','content':'All tasks are complete, call: RESPOND or COMPLETE'}])
+                        history.extend([{'role':'system','content':'thought: I have responded with a report of my recent internet search, this step is COMPLETE'}])
                         out_hist.extend([{'role':'assistant','content':f'{str(res0)}'}])
                         yield out_hist,merm,html,thought_hist
                     elif 'COMPLETE' in fn:
@@ -436,12 +445,18 @@ class Do_It_All:
                     elif 'NONE' in fn:
                         isV('ERROR ACTION NOT FOUND',True)
                         history.extend([{'role':'system','content':f'observation:The last thing we attempted resulted in an error, check formatting on the tool call'}])
-                    else:pass;seed = random.randint(1,9999999999999)
-        cnt+=1
-        if cnt > max_thought:
-            thought_hist.extend([{'role':'assistant','content':f'observation: We have used more than the Max Thought Limit, ending chat'}])
-            yield out_hist,merm,html,thought_hist
-            go=False
+                    else:
+                        history.extend([{'role':'system','content':'observation: The last thing I tried resulted in an error, I should try selecting a different available tool using the format, tool:TOOL_NAME tool_input=required info'}])
+
+                        pass;seed = random.randint(1,9999999999999)
             
+            if max_thought > 0:
+                cnt-=1
+                if cnt <= 0:
+                    thought_hist.extend([{'role':'assistant','content':f'observation: We have used more than the Max Thought Limit, ending chat'}])
+                    yield out_hist,merm,html,thought_hist
+                    go=False
+                    break
+                
 
 
