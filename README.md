@@ -14,17 +14,16 @@ The **Do It All** basic agent system for Python. It provides a framework for bui
 ### 1. Clone the repository:
 ```bash
 git clone https://github.com/broadfield-dev/doitall.git
-cd doitall
 ```
 
 ### 2. Install dependencies:
 ```bash
-pip install -r requirements.txt
+pip install ./doitall
 ```
 
-### 3. Run the main script:
+### 3. Run the demo script:
 ```bash
-python demo.py
+python doitall/demo.py
 ```
 # TODO
 - Document Reading
