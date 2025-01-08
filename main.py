@@ -6,7 +6,7 @@ from huggingface_hub import InferenceClient
 import datetime
 import requests
 import random
-import module.prompts as prompts
+import prompts1 as prompts
 import uuid
 import json
 import bs4
@@ -458,5 +458,3 @@ class Do_It_All:
                     go=False
                     break
                 
-
-
