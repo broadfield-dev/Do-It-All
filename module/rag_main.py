@@ -18,10 +18,7 @@ from langchain.text_splitter import RecursiveJsonSplitter
 from langchain.docstore.document import Document
 from langchain_chroma import Chroma
 from pypdf import PdfReader
-
-import chromadb
-from chromadb.config import Settings
-from langchain_huggingface import HuggingFaceEndpoint,HuggingFaceEmbeddings,ChatHuggingFace
+from langchain_huggingface import HuggingFaceEmbeddings
 
 class RagClient:
     def __init__(self):
@@ -545,7 +542,6 @@ class Do_It_All:
                         yield out_hist,merm,html,thought_hist
                         ret = self.generate(prompt, history,mod,10000,seed,role='RESPOND',data=in_data)
                         ret_out=str(list(ret)[0])
-                        yield from ret_out
                         hist_catch=[{'role':'assistant','content':ret_out}]
                         out_hist.extend(hist_catch)
                         rag.save_memory(ret_out)
