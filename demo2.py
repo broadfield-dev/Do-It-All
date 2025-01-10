@@ -10,7 +10,7 @@ import ollama
 import datetime
 import requests
 import random
-import prompts1 as prompts
+import module.prompts as prompts
 import uuid
 import json
 import bs4
