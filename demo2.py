@@ -1,9 +1,7 @@
 import gradio as gr
 from doitall.module.gradio_theme import theme
 import random
-#from main import Do_It_All
-#import doitall.main as main
-import Do_It_All as main
+import doitall.module.rag_main as main
 
 def isV(inp,is_=False):  # Verbose
     if is_==True:
