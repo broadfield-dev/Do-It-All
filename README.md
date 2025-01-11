@@ -29,7 +29,7 @@ python doitall/demo.py
 ### 3.1 Run the demo script (demo2.py):
 Demo2 includes RAG, and document reading, and requires additional dependency installs
 ```bash
-pip install pip install ollama langchain langchain_community langchain_chroma langchain_huggingface pypdf
+pip install ollama langchain langchain_community langchain_chroma langchain_huggingface pypdf
 ```
 Now run the demo
 ```bash
