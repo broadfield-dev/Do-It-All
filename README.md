@@ -8,6 +8,8 @@ The **Do It All** basic agent system for Python. It provides a framework for bui
 - Creates a path and follows it
 - Internet Search
 - Image Generation
+- RAG system
+- Document reading
 - Normal Chatbot
 
 ## Usage
@@ -38,11 +40,10 @@ python doitall/demo2.py
 
 # TODO
 - Add more model sources
-- Document Reading
-- RAG
 - Screen Reading
 - Console Control
 - Screen Control
+- Voice in/out
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
