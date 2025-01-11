@@ -22,10 +22,20 @@ git clone https://github.com/broadfield-dev/doitall.git
 pip install ./doitall
 ```
 
-### 3. Run the demo script:
+### 3. Run the demo script (demo.py):
 ```bash
 python doitall/demo.py
 ```
+### 3.1 Run the demo script (demo2.py):
+Demo2 includes RAG, and document reading, and requires additional dependency installs
+```bash
+pip install pip install ollama langchain langchain_community langchain_chroma langchain_huggingface pypdf
+```
+Now run the demo
+```bash
+python doitall/demo2.py
+```
+
 # TODO
 - Add more model sources
 - Document Reading
